@@ -1,10 +1,9 @@
 from django.db import models
-from django.core.exceptions import ValidationError
 from dictionary.validators import is_alphabetical
 
 
 class Word(models.Model):
-    name = models.CharField(max_length=40, validators=[is_alphabetical, ])
+    name = models.CharField(max_length=40, unique=True, validators=[is_alphabetical, ])
 
     def __str__(self):
         return self.name

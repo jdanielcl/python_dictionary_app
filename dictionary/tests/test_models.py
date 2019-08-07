@@ -1,6 +1,7 @@
 from django.test import TestCase
 from dictionary.models import Word
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 
 
 class TestModels(TestCase):
@@ -16,3 +17,12 @@ class TestModels(TestCase):
             self.assertNotEqual(word_fail.name, test_value)
         except ValidationError:
             self.assertRaises(ValidationError)
+
+    def test_word_is_unique(self):
+        test_value = 'flatter'
+        Word.objects.create(name=test_value)
+        try:
+            word_fail = Word.objects.create(name=test_value)
+            self.assertNotEqual(word_fail.name, test_value)
+        except IntegrityError:
+            self.assertRaises(IntegrityError)
