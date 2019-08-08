@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .routers import router
+from dictionary.api.viewsets import WordSearch
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls), name='api'),
+    path('search/', WordSearch.as_view(), name='search'),
 ]

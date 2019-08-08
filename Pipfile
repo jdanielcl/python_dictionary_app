@@ -13,6 +13,7 @@ Django = "*"
 Markdown = "*"
 httpie = "*"
 django-extensions = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"

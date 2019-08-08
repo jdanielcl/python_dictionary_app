@@ -1,3 +1,5 @@
+from abc import ABC
+
 from rest_framework import serializers
 from dictionary.models import Word
 
