@@ -12,6 +12,7 @@ bpython = "*"
 Django = "*"
 Markdown = "*"
 httpie = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.6"
