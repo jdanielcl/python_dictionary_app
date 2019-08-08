@@ -10,5 +10,5 @@ class TestUlrs(TestCase):
         self.assertEqual(resolve(url).func.cls, WordViewSet)
 
     def test_word_detail_url(self):
-        url = reverse('words-detail', args={'pk': 1})
+        url = reverse('words-detail', args={'1'})
         self.assertEqual(resolve(url).func.cls, WordViewSet)
