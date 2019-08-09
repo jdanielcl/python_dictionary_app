@@ -1,14 +1,16 @@
 from rest_framework import viewsets, views
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from dictionary.models import Word
 from dictionary.api.serializers import WordSerializer
-from dictionary.forms import WordForm
 import requests as req
 import json
 
 
 class WordViewSet(viewsets.ModelViewSet):
-
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
     queryset = Word.objects.all()
     serializer_class = WordSerializer
 
