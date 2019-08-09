@@ -9,7 +9,7 @@ import requests as req
 import json
 
 
-class WordViewSet(viewsets.ModelViewSet):
+class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin):
     authentication_classes = (SessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     queryset = Word.objects.all()
@@ -18,6 +18,8 @@ class WordViewSet(viewsets.ModelViewSet):
 
 class AttemptsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
     serializer_class = AttemptsSerializer
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         queryset = Attempts.objects.all().filter(user=self.request.user)

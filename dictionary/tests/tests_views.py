@@ -14,7 +14,7 @@ class TestViews(TestCase):
         self.client.login(username='user', password='pass')
 
         self.list_url = reverse('words-list')
-        self.detail_url = reverse('words-detail', args={1})
+        self.word_detail_url = reverse('words-detail', args={1})
         self.list_attempts_url = reverse('attempts-list')
         self.detail_attempts_url = reverse('attempts-detail', args={1})
         self.detail_attempts_no_owner_url = reverse('attempts-detail', args={2})
@@ -30,7 +30,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_view_word_detail_ok(self):
-        response = self.client.get(self.detail_url)
+        response = self.client.get(self.word_detail_url)
         self.assertEqual(response.status_code, 200)
 
     def test_view_attempt_list_ok(self):
@@ -80,3 +80,13 @@ class TestViews(TestCase):
     def test_view_attempt_delete_not_allowed(self):
         response = self.client.delete(self.detail_attempts_url)
         self.assertEqual(response.status_code, 405)
+
+    def test_view_word_update_not_allowed(self):
+        data = json.dumps({'id': 1, 'name': 'flatter'})
+        response = self.client.put(self.word_detail_url, data=data, content_type=self.content_type)
+        self.assertEqual(response.status_code, 405)
+
+    def test_view_word_delete_not_allowed(self):
+        response = self.client.delete(self.word_detail_url)
+        self.assertEqual(response.status_code, 405)
+
