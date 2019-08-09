@@ -19,7 +19,7 @@ class Attempts(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     word = models.ForeignKey(Word, on_delete=models.CASCADE)
     added_date = models.DateTimeField(auto_now_add=True)
-    attempts = models.IntegerField(default='0')
+    attempts = models.IntegerField(default=0)
     hits = models.IntegerField(default=0)
 
     @property
@@ -29,4 +29,3 @@ class Attempts(models.Model):
         except ZeroDivisionError:
             accuracy = 0
         return accuracy
-
