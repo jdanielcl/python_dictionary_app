@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from dictionary.models import Word, Attempts
 from dictionary.api.serializers import WordSerializer, AttemptsSerializer
 import requests as req
+from rest_framework import status
 import json
 
 
@@ -14,6 +15,33 @@ class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
     permission_classes = (IsAuthenticated,)
     queryset = Word.objects.all()
     serializer_class = WordSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        name = request.data.__getitem__('name')
+
+        try:
+            word = Word.objects.get(name=name)
+            serializer = self.get_serializer(word)
+            message = 'the word already exists'
+        except Word.DoesNotExist:
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            word = Word.objects.get(name=name)
+            message = 'the word was created'
+
+        headers = self.get_success_headers(serializer.data)
+
+        try:
+            Attempts.objects.get(user=self.request.user, word=word)
+            message += ", and was associated with the user"
+        except Attempts.DoesNotExist:
+            Attempts.objects.create(user=self.request.user, word=word)
+
+        data = serializer.data
+        data['message'] = message
+
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class AttemptsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
