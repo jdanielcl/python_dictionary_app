@@ -13,6 +13,7 @@ class TestViews(TestCase):
         self.user_no_owner = User.objects.create_user(username='user_no_owner', password='pass')
         self.client.login(username='user', password='pass')
 
+        self.random_url = reverse('random')
         self.word_list_url = reverse('words-list')
         self.word_detail_url = reverse('words-detail', args={1})
         self.list_attempts_url = reverse('attempts-list')
@@ -113,3 +114,19 @@ class TestViews(TestCase):
         data = json.dumps({})
         with self.assertRaises(KeyError):
             self.client.post(self.word_list_url, data=data, content_type=self.content_type)
+
+    def test_get_random_word_no_login(self):
+        self.client.logout()
+        response = self.client.get(self.random_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_random_word_success(self):
+        response = self.client.get(self.random_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_random_no_words(self):
+        self.word.delete()
+        response = self.client.get(self.random_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+

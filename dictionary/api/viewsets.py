@@ -9,6 +9,7 @@ from rest_framework import status
 import requests as req
 import random
 import json
+import math
 
 
 class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin):
@@ -96,7 +97,10 @@ class RandomWord(views.APIView):
 
     def get(self, request):
         queryset = Attempts.objects.filter(user=request.user)
+        if len(queryset) == 0:
+            return Response([])
         queryset = sorted(queryset, key=lambda x: x.accuracy)
-        random_word = random.choice(queryset)
+        mid = math.ceil(len(queryset)/2)
+        random_word = random.choice(queryset[:mid])
         serializer_class = AttemptsSerializer(random_word)
         return Response(serializer_class.data)
