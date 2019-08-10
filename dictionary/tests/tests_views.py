@@ -13,20 +13,21 @@ class TestViews(TestCase):
         self.user_no_owner = User.objects.create_user(username='user_no_owner', password='pass')
         self.client.login(username='user', password='pass')
 
-        self.list_url = reverse('words-list')
+        self.word_list_url = reverse('words-list')
         self.word_detail_url = reverse('words-detail', args={1})
         self.list_attempts_url = reverse('attempts-list')
         self.detail_attempts_url = reverse('attempts-detail', args={1})
         self.detail_attempts_no_owner_url = reverse('attempts-detail', args={2})
 
         self.word = Word.objects.create(id=1, name='flatter')
+        self.word_auxiliary = Word.objects.create(id=2, name='lurking')
         self.attempt_owner = Attempts.objects.create(user=self.user, word=self.word)
         self.attempt_no_owner = Attempts.objects.create(user=self.user_no_owner, word=self.word)
 
         self.content_type = 'application/json'
 
     def test_view_word_list_ok(self):
-        response = self.client.get(self.list_url)
+        response = self.client.get(self.word_list_url)
         self.assertEqual(response.status_code, 200)
 
     def test_view_word_detail_ok(self):
@@ -82,7 +83,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_view_word_update_not_allowed(self):
-        data = json.dumps({'id': 1, 'name': 'flatter'})
+        data = json.dumps({'id': self.word.id, 'name': self.word.name})
         response = self.client.put(self.word_detail_url, data=data, content_type=self.content_type)
         self.assertEqual(response.status_code, 405)
 
@@ -90,3 +91,25 @@ class TestViews(TestCase):
         response = self.client.delete(self.word_detail_url)
         self.assertEqual(response.status_code, 405)
 
+    def test_view_word_does_not_exists(self):
+        data = json.dumps({'name': 'new word'})
+        response = self.client.post(self.word_list_url, data=data, content_type=self.content_type)
+        self.assertEqual(response.data.__getitem__('name'), 'new word')
+        self.assertEqual(response.status_code, 201)
+
+    def test_view_word_create_exist_and_is_associated(self):
+        data = json.dumps({'name': self.word.name})
+        response = self.client.post(self.word_list_url, data=data, content_type=self.content_type)
+        self.assertEqual(response.data.__getitem__('name'), self.word.name)
+        self.assertEqual(response.status_code, 201)
+
+    def test_view_word_exist_attempt_does_not_exist(self):
+        data = json.dumps({'name': self.word_auxiliary.name})
+        response = self.client.post(self.word_list_url, data=data, content_type=self.content_type)
+        self.assertEqual(response.data.__getitem__('name'), self.word_auxiliary.name)
+        self.assertEqual(response.status_code, 201)
+
+    def test_word_creation_no_params(self):
+        data = json.dumps({})
+        with self.assertRaises(KeyError):
+            self.client.post(self.word_list_url, data=data, content_type=self.content_type)

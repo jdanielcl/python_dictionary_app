@@ -18,7 +18,11 @@ class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        name = request.data.__getitem__('name')
+
+        try:
+            name = request.data.__getitem__('name')
+        except KeyError:
+            raise KeyError('No correct params')
 
         try:
             word = Word.objects.get(name=name)
@@ -37,6 +41,7 @@ class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
             message += ", and was associated with the user"
         except Attempts.DoesNotExist:
             Attempts.objects.create(user=self.request.user, word=word)
+            message += ", and now is associated with the user"
 
         data = serializer.data
         data['message'] = message
