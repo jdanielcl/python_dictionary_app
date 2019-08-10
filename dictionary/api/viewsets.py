@@ -5,8 +5,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from dictionary.models import Word, Attempts
 from dictionary.api.serializers import WordSerializer, AttemptsSerializer
-import requests as req
 from rest_framework import status
+import requests as req
+import random
 import json
 
 
@@ -87,3 +88,15 @@ class WordSearch(views.APIView):
         word_definition = req.get(f'https://googledictionaryapi.eu-gb.mybluemix.net/?define={word}&lang=en')
         data = json.loads(word_definition.text)
         return Response(data)
+
+
+class RandomWord(views.APIView):
+    authentication_classes = (SessionAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        queryset = Attempts.objects.filter(user=request.user)
+        queryset = sorted(queryset, key=lambda x: x.accuracy)
+        random_word = random.choice(queryset)
+        serializer_class = AttemptsSerializer(random_word)
+        return Response(serializer_class.data)
