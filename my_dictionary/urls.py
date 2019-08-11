@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from .routers import router
 from dictionary.api.viewsets import WordSearch, RandomWord
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls), name='api'),
     path('search/', WordSearch.as_view(), name='search'),
     path('random/', RandomWord.as_view(), name='random'),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
 ]
