@@ -10,10 +10,17 @@ import requests as req
 import random
 import json
 import math
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
 
 
 class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
     permission_classes = (IsAuthenticated,)
     queryset = Word.objects.all()
     serializer_class = WordSerializer
