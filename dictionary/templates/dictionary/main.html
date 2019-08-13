@@ -30,12 +30,9 @@
 <br>
 
 <div class="text-center">
-    <form action="/api/words/" method="POST">
-         {% csrf_token %}
         <input type="text" id="word-to-find" name="name">
         <button data-bind="click: searchWord" type="button" class="btn btn-info">Search Word</button>
-        <button type="submit" class="btn btn-primary">Add Word</button>
-    </form>
+        <button data-bind="click: addNewWord" type="button" class="btn btn-primary">Add Word</button>
 </div>
 
 <br/>
