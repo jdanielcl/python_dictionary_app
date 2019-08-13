@@ -50,14 +50,43 @@ function AppViewModel() {
         $('#cambridge-frame').hide()
     }
 
-    self.addNewWord = function(){
-        var word_to_add = $('#word-to-find').val()
-        $.post( "/api/words/", {'name': word_to_add},function(data){
-            console.log(data);
-        });
-    }
-
 }
 
 // Activates knockout.js
 ko.applyBindings(new AppViewModel());
+
+$('#btn-add-new-word').click(function(){
+        var word_to_add = $('#word-to-find').val();
+        $.confirm({
+            title: "Confirmation",
+            content: 'Are you sure adding the word: '+word_to_add,
+            buttons: {
+                yes: {
+                    keys: ['y'],
+                    action: function () {
+                        $.post( "/api/words/", {'name': word_to_add},function(data){
+                            $.confirm({
+                                title: 'Important!',
+                                content: data.message,
+                                autoClose: 'cancelAction|6000',
+                                buttons: {
+                                    cancelAction: {
+                                        text: 'Close',
+                                        function () {
+
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    }
+                },
+                no: {
+                    keys: ['N'],
+                    action: function () {
+
+                    }
+                },
+            }
+        });
+    });
