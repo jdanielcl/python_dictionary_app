@@ -14,6 +14,7 @@ Markdown = "*"
 httpie = "*"
 django-extensions = "*"
 requests = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.6"

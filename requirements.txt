@@ -6,3 +6,4 @@ bpython
 httpie
 django-extensions
 requests
+django-cors-headers
