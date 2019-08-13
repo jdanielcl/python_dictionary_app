@@ -28,7 +28,7 @@
                 {% csrf_token %}
                 <input type="text" name="username" class="form-control" placeholder="Email" required autofocus>
                 <input type="password"  name="password" class="form-control" placeholder="Password" required>
-                <input type="hidden" name="next" value="{% url 'attempts-list' %}" />
+                <input type="hidden" name="next" value="{% url 'index' %}" />
                 <button class="btn btn-lg btn-primary btn-block" type="submit">
                     Sign in</button>
                 <label class="checkbox pull-left">

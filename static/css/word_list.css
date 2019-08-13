@@ -1,0 +1,7 @@
+table.dataTable.display tbody tr.odd>.sorting_1, table.dataTable.order-column.stripe tbody tr.odd>.sorting_1{
+    background-color: #f9f9f9 !important;
+}
+
+#words_wrapper{
+    margin: 0 3%;
+}

@@ -25,4 +25,5 @@ urlpatterns = [
     path('search/', WordSearch.as_view(), name='search'),
     path('random/', RandomWord.as_view(), name='random'),
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('dictionary/', include('dictionary.urls'), name='dictionary'),
 ]
