@@ -25,7 +25,7 @@ SECRET_KEY = '8qhr%juw!baei+@qki*xl8ais7r6ntr9(62xh2t7%&10r)!p(x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.111',]
 
 
 # Application definition
@@ -129,7 +129,8 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
+    'http://192.168.0.111:8000',
 ]
 
 CORS_ALLOW_METHODS = [

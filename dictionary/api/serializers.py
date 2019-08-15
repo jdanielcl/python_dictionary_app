@@ -16,7 +16,7 @@ class AttemptsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attempts
-        fields = ('word', 'added_date', 'attempts', 'hits', 'word_name', 'accuracy')
+        fields = ('id', 'word', 'added_date', 'attempts', 'hits', 'word_name', 'accuracy')
 
     def get_word_name(self, obj):
         return obj.word.name

@@ -60,7 +60,7 @@ class WordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retriev
 
 class AttemptsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin):
     serializer_class = AttemptsSerializer
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (CsrfExemptSessionAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
@@ -72,7 +72,7 @@ class AttemptsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         instance = self.get_object()
         new_hit = 0
         try:
-            if request.data.__getitem__('success') is True:
+            if bool(request.data.__getitem__('success')) is True:
                 new_hit = 1
         except KeyError:
             return HttpResponseBadRequest()

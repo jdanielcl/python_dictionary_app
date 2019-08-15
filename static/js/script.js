@@ -56,37 +56,99 @@ function AppViewModel() {
 ko.applyBindings(new AppViewModel());
 
 $('#btn-add-new-word').click(function(){
-        var word_to_add = $('#word-to-find').val();
-        $.confirm({
-            title: "Confirmation",
-            content: 'Are you sure adding the word: '+word_to_add,
-            buttons: {
-                yes: {
-                    keys: ['y'],
-                    action: function () {
-                        $.post( "/api/words/", {'name': word_to_add},function(data){
-                            $.confirm({
-                                title: 'Important!',
-                                content: data.message,
-                                autoClose: 'cancelAction|6000',
-                                buttons: {
-                                    cancelAction: {
-                                        text: 'Close',
-                                        function () {
+    var word_to_add = $('#word-to-find').val();
+    $.confirm({
+        title: "Confirmation",
+        content: 'Are you sure adding the word: '+word_to_add,
+        buttons: {
+            yes: {
+                keys: ['y'],
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.post( "/api/words/", {'name': word_to_add.toLowerCase()},function(data){
+                        $.confirm({
+                            title: 'Important!',
+                            content: data.message,
+                            autoClose: 'cancelAction|6000',
+                            buttons: {
+                                cancelAction: {
+                                    text: 'Close',
+                                    function () {
 
-                                        }
                                     }
                                 }
-                            });
+                            }
                         });
+                    });
+                }
+            },
+            no: {
+                keys: ['N'],
+                action: function () {
+
+                }
+            },
+        }
+    });
+});
+
+$('#play-random-btn').click(function(){
+    playRandom();
+});
+
+function playRandom(){
+    $.get('/random/', function(data){
+        $.confirm({
+            title: 'Tell me the meaning',
+            content: data.word_name,
+            autoClose: 'fail|10000',
+            buttons: {
+                success: {
+                    text: 'I know!',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        sendResult(data.id, 'True');
+                        playRandom();
                     }
                 },
-                no: {
-                    keys: ['N'],
+                fail: {
+                    btnClass: 'btn-red',
                     action: function () {
-
-                    }
+                        sendResult(data.id, 'False');
+                        $.confirm({
+                            title: 'Maybe the next time',
+                            content: '<a href="'+url_cambridge+data.word_name+'" target="_blank">'+data.word_name +' in cambridge'+'</a>',
+                            type: 'red',
+                            typeAnimated: true,
+                            buttons: {
+                                nextWord: {
+                                    text: 'Next word',
+                                    btnClass: 'btn-blue',
+                                    action: function(){
+                                        playRandom();
+                                    }
+                                },
+                                finishGame: function () {
+                                }
+                            }
+                        });
+                    },
+                },
+                finish: {
+                    text: 'Finish game'
                 },
             }
         });
+    })
+}
+
+function sendResult(word, result){
+    jQuery.ajax({
+        type: 'PUT',
+        url: '/api/attempts/'+word+'/',
+        data: {'word': word, 'attempts': 0, 'hits': 0, 'success': result},
+        success: function(data) {
+            console.log(data)
+        }
     });
+}
