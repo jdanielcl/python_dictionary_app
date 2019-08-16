@@ -7,3 +7,4 @@ httpie
 django-extensions
 requests
 django-cors-headers
+python-decouple
