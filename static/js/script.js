@@ -72,7 +72,7 @@ $('#btn-add-new-word').click(function(){
                             autoClose: 'cancelAction|6000',
                             buttons: {
                                 cancelAction: {
-                                    text: 'Close',
+                                    text: 'close',
                                     function () {
 
                                     }
