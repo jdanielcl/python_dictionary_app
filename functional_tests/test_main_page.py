@@ -32,6 +32,7 @@ class TestMainPage(LiveServerTestCase):
         word = get_random_line_from_file(AVAILABLE_WORDS_FILE)
         clean_word = word.strip('\n')
         self.browser.find_element_by_id('word-to-find').send_keys(clean_word)
+        time.sleep(1)
         self.browser.find_element_by_id("btn-add-new-word").click()
         time.sleep(1)  # wait the creation of yes button
         self.browser.find_element_by_xpath('//button[text()="yes"]').click()
@@ -48,3 +49,44 @@ class TestMainPage(LiveServerTestCase):
         # It ensures the attempts, hits and accuracy attributes are in zero
         self.assertTrue("<td>0</td><td>0</td><td>0.0%</td>" in parent.get_attribute('innerHTML'))
 
+    def test_random_play_knowing_the_word(self):
+        self.browser.find_element_by_id('play-random-btn').click()
+        time.sleep(1)
+        content = self.browser.find_element_by_class_name('jconfirm-content')
+        word = content.find_element_by_xpath(".//div").text
+        self.browser.find_element_by_xpath('//button[text()="i know!"]').click()
+        time.sleep(1)
+        self.browser.find_element_by_xpath('//button[text()="finish game"]').click()
+        self.browser.find_element_by_xpath('//input[@type="search"]').send_keys(word)
+        parent = self.browser.find_element_by_xpath('//a[text()="' + word + '"]/parent::td/parent::tr')
+        attempts = int(parent.find_element_by_xpath('.//td[3]').text)
+        hits = int(parent.find_element_by_xpath('.//td[4]').text)
+        self.browser.refresh()
+        time.sleep(1)
+        self.browser.find_element_by_xpath('//input[@type="search"]').send_keys(word)
+        parent = self.browser.find_element_by_xpath('//a[text()="' + word + '"]/parent::td/parent::tr')
+        new_attempts = int(parent.find_element_by_xpath('.//td[3]').text)
+        new_hits = int(parent.find_element_by_xpath('.//td[4]').text)
+        self.assertEqual(hits+1, new_hits)
+        self.assertEqual(attempts+1, new_attempts)
+
+    def test_random_play_failing_the_word(self):
+        self.browser.find_element_by_id('play-random-btn').click()
+        time.sleep(1)
+        content = self.browser.find_element_by_class_name('jconfirm-content')
+        word = content.find_element_by_xpath(".//div").text
+        self.browser.find_element_by_xpath('//button[text()="fail"]').click()
+        time.sleep(1)
+        self.browser.find_element_by_xpath('//button[text()="finish game"]').click()
+        self.browser.find_element_by_xpath('//input[@type="search"]').send_keys(word)
+        parent = self.browser.find_element_by_xpath('//a[text()="' + word + '"]/parent::td/parent::tr')
+        attempts = int(parent.find_element_by_xpath('.//td[3]').text)
+        hits = int(parent.find_element_by_xpath('.//td[4]').text)
+        self.browser.refresh()
+        time.sleep(1)
+        self.browser.find_element_by_xpath('//input[@type="search"]').send_keys(word)
+        parent = self.browser.find_element_by_xpath('//a[text()="' + word + '"]/parent::td/parent::tr')
+        new_attempts = int(parent.find_element_by_xpath('.//td[3]').text)
+        new_hits = int(parent.find_element_by_xpath('.//td[4]').text)
+        self.assertEqual(hits, new_hits)
+        self.assertEqual(attempts+1, new_attempts)
