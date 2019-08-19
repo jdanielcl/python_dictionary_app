@@ -57,39 +57,46 @@ ko.applyBindings(new AppViewModel());
 
 $('#btn-add-new-word').click(function(){
     var word_to_add = $('#word-to-find').val();
-    $.confirm({
-        title: "Confirmation",
-        content: 'Are you sure adding the word: '+word_to_add,
-        buttons: {
-            yes: {
-                keys: ['y'],
-                btnClass: 'btn-blue',
-                action: function () {
-                    $.post( "/api/words/", {'name': word_to_add.toLowerCase()},function(data){
-                        $.confirm({
-                            title: 'Important!',
-                            content: data.message,
-                            autoClose: 'cancelAction|6000',
-                            buttons: {
-                                cancelAction: {
-                                    text: 'close',
-                                    function () {
+    if(word_to_add.length < 2){
+        $.alert({
+            title: 'Alert!',
+            content: 'Write more than two characters',
+        });
+    }else{
+        $.confirm({
+            title: "Confirmation",
+            content: 'Are you sure adding the word: '+word_to_add,
+            buttons: {
+                yes: {
+                    keys: ['y'],
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        $.post( "/api/words/", {'name': word_to_add.toLowerCase()},function(data){
+                            $.confirm({
+                                title: 'Important!',
+                                content: data.message,
+                                autoClose: 'cancelAction|6000',
+                                buttons: {
+                                    cancelAction: {
+                                        text: 'close',
+                                        function () {
 
+                                        }
                                     }
                                 }
-                            }
+                            });
                         });
-                    });
-                }
-            },
-            no: {
-                keys: ['N'],
-                action: function () {
+                    }
+                },
+                no: {
+                    keys: ['N'],
+                    action: function () {
 
-                }
-            },
-        }
-    });
+                    }
+                },
+            }
+        });
+    }
 });
 
 $('#play-random-btn').click(function(){
