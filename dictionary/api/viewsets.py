@@ -1,7 +1,6 @@
 from django.http import HttpResponseBadRequest
 from rest_framework import viewsets, views, mixins
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from dictionary.models import Word, Attempts
 from dictionary.api.serializers import WordSerializer, AttemptsSerializer
@@ -10,7 +9,8 @@ import requests as req
 import random
 import json
 import math
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication
+from dictionary.helpers import str_to_bool
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -72,7 +72,7 @@ class AttemptsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Ret
         instance = self.get_object()
         new_hit = 0
         try:
-            if bool(request.data.__getitem__('success')) is True:
+            if str_to_bool(request.data.__getitem__('success')) is True:
                 new_hit = 1
         except KeyError:
             return HttpResponseBadRequest()

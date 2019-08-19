@@ -104,7 +104,7 @@ function playRandom(){
             autoClose: 'fail|10000',
             buttons: {
                 success: {
-                    text: 'I know!',
+                    text: 'i know!',
                     btnClass: 'btn-blue',
                     action: function () {
                         sendResult(data.id, 'True');
@@ -122,20 +122,24 @@ function playRandom(){
                             typeAnimated: true,
                             buttons: {
                                 nextWord: {
-                                    text: 'Next word',
+                                    text: 'next word',
                                     btnClass: 'btn-blue',
                                     action: function(){
                                         playRandom();
                                     }
                                 },
-                                finishGame: function () {
+                                finishGame: {
+                                    text: 'finish game',
+                                    action: function () {
+
+                                    },
                                 }
                             }
                         });
                     },
                 },
                 finish: {
-                    text: 'Finish game'
+                    text: 'finish game'
                 },
             }
         });
@@ -143,6 +147,8 @@ function playRandom(){
 }
 
 function sendResult(word, result){
+    console.log(word)
+    console.log(result)
     jQuery.ajax({
         type: 'PUT',
         url: '/api/attempts/'+word+'/',
