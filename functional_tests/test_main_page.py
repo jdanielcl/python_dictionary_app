@@ -90,3 +90,9 @@ class TestMainPage(LiveServerTestCase):
         new_hits = int(parent.find_element_by_xpath('.//td[4]').text)
         self.assertEqual(hits, new_hits)
         self.assertEqual(attempts+1, new_attempts)
+
+    def test_create_word_no_word(self):
+        self.browser.find_element_by_id("btn-add-new-word").click()
+        time.sleep(1)  # wait the creation of yes button
+        alert = self.browser.find_element_by_xpath('//span[text()="Alert!"]')
+        self.assertIsNotNone(alert)
