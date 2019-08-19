@@ -27,20 +27,24 @@ class TestMainPage(LiveServerTestCase):
         # the user request the page for the first time
         self.assertEqual(self.browser.current_url, self.main_page_url)
 
+    # This test was designed to add a new word and be sure that it was added correctly.
     def test_add_new_word(self):
         word = get_random_line_from_file(AVAILABLE_WORDS_FILE)
         clean_word = word.strip('\n')
         self.browser.find_element_by_id('word-to-find').send_keys(clean_word)
         self.browser.find_element_by_id("btn-add-new-word").click()
-        time.sleep(2)
+        time.sleep(1)  # wait the creation of yes button
         self.browser.find_element_by_xpath('//button[text()="yes"]').click()
-        time.sleep(2)
+        time.sleep(1)  # wait the creation of close button
         self.browser.find_element_by_xpath('//button[text()="close"]').click()
         self.browser.refresh()
-        time.sleep(2)
+        time.sleep(1)
         self.browser.find_element_by_xpath('//input[@type="search"]').send_keys(clean_word)
-        time.sleep(2)
+        time.sleep(1)
         value_in_table = self.browser.find_element_by_xpath('//a[text()="'+clean_word+'"]').text
         self.assertEqual(clean_word, value_in_table)
         set_word_as_used(word)
+        parent = self.browser.find_element_by_xpath('//a[text()="'+clean_word+'"]/parent::td/parent::tr')
+        # It ensures the attempts, hits and accuracy attributes are in zero
+        self.assertTrue("<td>0</td><td>0</td><td>0.0%</td>" in parent.get_attribute('innerHTML'))
 
